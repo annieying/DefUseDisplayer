@@ -28,38 +28,19 @@ public class DefUse {
         
         String message = "";
         
-        message += outputMessage(printer.getVarBindings());
-        message += outputMessage(printer.getParameterBindings());
+        message += outputMessages(printer.getVarBindings());
+        message += outputMessages(printer.getParameterBindings());
    
         return message;
     }
         
-    public static String outputMessage(List<VariableDefUse> bindings) {
+    public static String outputMessages(List<VariableDefUse> bindings) {
     	
     	List<String> messages = new ArrayList<String>();
         for( VariableDefUse e : bindings ) {
 
             VariableDefUse defUse = e;
-            int variableId = defUse.getVariableId();
-            String typeName = defUse.getType();            
-            String varName = defUse.getDef().toString();
-            String parentName = defUse.getDef().getParent().toString().trim();
-            
-            String typeOfVar = "Parameter";
-            
-            String message = typeOfVar + " #" + variableId 
-            		+ " '" + varName + "' " 
-            		+ " of type " + typeName + " ";
-            
-            message += varName.equals(parentName) ? 
-            		"\n" : " (as in \"" + parentName +"\")\n";            
-            
-            for( SimpleName ref : defUse.getUses() ) {
-            	String refParentName = ref.getParent().toString().trim();            	
-                message += "  * used in \"" + refParentName + "\"\n";
-
-            }
-            message += "\n";
+            String message = outputMessage(e, "Parameter");
             messages.add(message);
         } 
         
@@ -73,32 +54,15 @@ public class DefUse {
         return finalMessage;
     }
     
-    public static String outputMessage(Map<IVariableBinding,VariableDefUse> bindings) {
+    public static String outputMessages(Map<IVariableBinding,VariableDefUse> bindings) {
     	
     	List<String> messages = new ArrayList<String>();
         for( Entry<IVariableBinding, VariableDefUse> e : bindings.entrySet()) {
 
             VariableDefUse defUse = e.getValue();
-            int variableId = e.getValue().getVariableId();
-            String typeName = defUse.getType();            
-            String varName = defUse.getDef().toString();
-            String parentName = defUse.getDef().getParent().toString().trim();
-            
+                        
             String typeOfVar = getTypeOfVariable(e.getKey()).toUpperCase();
-            
-            String message = typeOfVar + " #" + variableId 
-            		+ " '" + varName + "' " 
-            		+ " of type " + typeName + " ";
-            
-            message += varName.equals(parentName) ? 
-            		"\n" : " (as in \"" + parentName +"\")\n";            
-            
-            for( SimpleName ref : defUse.getUses() ) {
-            	String refParentName = ref.getParent().toString().trim();            	
-                message += "  * used in \"" + refParentName + "\"\n";
-
-            }
-            message += "\n";
+            String message = outputMessage(defUse, typeOfVar);            
             messages.add(message);
         } 
         
@@ -110,6 +74,30 @@ public class DefUse {
         }
         		
         return finalMessage;
+    }
+    
+    public static String outputMessage(VariableDefUse defUse, String typeOfVar) {
+    	 int variableId = defUse.getVariableId();
+         String typeName = defUse.getType();            
+         String varName = defUse.getDef().toString();
+         String parentName = defUse.getDef().getParent().toString().trim();
+                  
+         String message = typeOfVar + " #" + variableId 
+         		+ " '" + varName + "' " 
+         		+ " of type " + typeName + " ";
+         
+         message += varName.equals(parentName) ? 
+         		"\n" : 
+         		" (as in \"" + parentName +"\") " 
+         			+ " [" + defUse.getCharStart() + "," + defUse.getCharEnd() + "] " + "\n";            
+         
+         for( SimpleName ref : defUse.getUses() ) {
+         	String refParentName = ref.getParent().toString().trim();            	
+             message += "  * used in \"" + refParentName + "\"\n";
+
+         }
+         message += "\n";
+         return message;
     }
     
     public static String getTypeOfVariable(IVariableBinding binding) {

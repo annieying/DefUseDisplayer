@@ -16,7 +16,6 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
-import org.mortbay.util.StringUtil;
 
 import defuse.AstUtil;
 import defuse.DefUse;
@@ -83,16 +82,14 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 			    ParsingAttribute pa = ParsingAttribute.valueOf(parsingAttribute);
 			    
 			    if( pa == ParsingAttribute.JavaCompilationUnit ){
-			    	try {
-
+			    	try {			    		
 		            	System.out.println(code);
 		            	System.out.println("*** " + parsingAttribute + "***");
 			    		String output = "Result:\n\n"; 
 			    		output = DefUse.analyze(AstUtil.createCompilationUnit(code));
 			    		output = output.replace("\n", "<br>");
-			    		htmlString = htmlString.replace(DEF_USE_PLACEHOLDER, output);
-			    	} catch( CoreException e ) {
-			    		
+			    		htmlString = htmlString.replace(DEF_USE_PLACEHOLDER, output);			    		
+			    	} catch( CoreException e ) {			    		
 			    	}
 			    } else {
 			    	htmlString = htmlString.replace(DEF_USE_PLACEHOLDER, "Arguments good");

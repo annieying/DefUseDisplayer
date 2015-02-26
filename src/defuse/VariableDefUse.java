@@ -10,12 +10,16 @@ public class VariableDefUse {
     private Set<SimpleName> uses = new HashSet<SimpleName>();
     private String type;
     private int variableId;
-   
+    private int charStart;
+    private int charEnd;   
     
-    public VariableDefUse( SimpleName def, int variableId, String type ) {
+    public VariableDefUse( SimpleName def, int variableId, String type,
+    		int charStart, int charEnd ) {
         this.def=def;
         this.type = type;
         this.variableId = variableId;
+        this.charStart = charStart;
+        this.charEnd = charEnd;
     }
     
     public SimpleName getDef() {
@@ -44,5 +48,13 @@ public class VariableDefUse {
     public int getVariableId()
     {
         return variableId;
-    }    
+    }
+    
+    public int getCharStart() {
+    	return charStart;
+    }
+    
+    public int getCharEnd() {
+    	return charEnd;
+    }
 }

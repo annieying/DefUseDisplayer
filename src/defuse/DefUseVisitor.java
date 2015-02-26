@@ -51,7 +51,11 @@ public class DefUseVisitor extends ASTVisitor {
 	    		String typeName = var.getType().toString();
 	    		int variableId = i;
 	    		
-				VariableDefUse defUse = new VariableDefUse(varName, 	variableId, typeName);
+	            int charStart = varName.getStartPosition();
+	            int charEnd = charStart + varName.getLength();
+	    		
+				VariableDefUse defUse = new VariableDefUse(varName, variableId,
+						typeName, charStart, charEnd);
 				parameterBindings.add(defUse);   	              
 				System.out.println("Set usage of var " + variableId);	              
 	
@@ -76,8 +80,12 @@ public class DefUseVisitor extends ASTVisitor {
         	  
         	  VariableDefUse defUse = varBindings.get(varBinding);
 	          if (defUse == null ) {
+	              int charStart = varName.getStartPosition();
+	              int charEnd = charStart + varName.getLength();
+	              
 	              defUse = new VariableDefUse(varName,
-	                      variableId, varBinding.getType().getName());
+	                      variableId, varBinding.getType().getName(),
+	                      charStart, charEnd);
 	              varBindings.put(varBinding, defUse);   	              
 	              System.out.println("Set usage of var " + variableId);	              
 	          } 
@@ -108,8 +116,12 @@ public class DefUseVisitor extends ASTVisitor {
               int variableId = binding.getVariableId();
               SimpleName varName = fragment.getName();
               
+              int charStart = varName.getStartPosition();
+              int charEnd = charStart + varName.getLength();
+              
               VariableDefUse defUse = new VariableDefUse(varName,
-	                      variableId, binding.getType().getName());
+	                      variableId, binding.getType().getName(),
+	                      charStart, charEnd);
 	          varBindings.put(binding, defUse);
 
 	          System.out.println("Set declaration var " + variableId);
@@ -135,8 +147,13 @@ public class DefUseVisitor extends ASTVisitor {
 	  IVariableBinding binding = fragments.iterator().next().resolveBinding();
 	  if( binding != null ) {
             int variableId = binding.getVariableId();
+            
+            int charStart = varName.getStartPosition();
+            int charEnd = charStart + varName.getLength();
+            
             VariableDefUse defUse = new VariableDefUse(varName,
-                    variableId+1000, binding.getType().getName());
+                    variableId+1000, binding.getType().getName(),
+                    charStart, charEnd);
             varBindings.put(binding, defUse);        
             defUse.setDef(varName);
             
