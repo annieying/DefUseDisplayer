@@ -18,7 +18,6 @@ public class DefUse {
 
         DefUseVisitor printer = new DefUseVisitor();
     	try {
-
             ASTNode ast = AstUtil.getEclipseAst(unit);
 	        ast.accept(printer);
     	} catch(Throwable e ) {
@@ -27,11 +26,10 @@ public class DefUse {
         
         System.out.println("Visited AST");
         
-        String message = "Result:\n\n";
+        String message = "";
         
         message += outputMessage(printer.getVarBindings());
         message += outputMessage(printer.getParameterBindings());
-
    
         return message;
     }
@@ -54,11 +52,11 @@ public class DefUse {
             		+ " of type " + typeName + " ";
             
             message += varName.equals(parentName) ? 
-            		"\n" : " (as in '" + parentName +"')\n";            
+            		"\n" : " (as in \"" + parentName +"\")\n";            
             
             for( SimpleName ref : defUse.getUses() ) {
             	String refParentName = ref.getParent().toString().trim();            	
-                message += "  * used in '" + refParentName + "'\n";
+                message += "  * used in \"" + refParentName + "\"\n";
 
             }
             message += "\n";
@@ -93,11 +91,11 @@ public class DefUse {
             		+ " of type " + typeName + " ";
             
             message += varName.equals(parentName) ? 
-            		"\n" : " (as in '" + parentName +"')\n";            
+            		"\n" : " (as in \"" + parentName +"\")\n";            
             
             for( SimpleName ref : defUse.getUses() ) {
             	String refParentName = ref.getParent().toString().trim();            	
-                message += "  * used in '" + refParentName + "'\n";
+                message += "  * used in \"" + refParentName + "\"\n";
 
             }
             message += "\n";

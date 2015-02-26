@@ -43,16 +43,20 @@ public class DefUseVisitor extends ASTVisitor {
     	for( SingleVariableDeclaration var : parameters  ){
     	
     		IVariableBinding binding = var.resolveBinding();
-    		SimpleName varName = var.getName();
-
-    		String typeName = var.getType().toString();
-    		int variableId = i;
-    		
-			VariableDefUse defUse = new VariableDefUse(varName, 	variableId, typeName);
-			parameterBindings.add(defUse);   	              
-			System.out.println("Set usage of var " + variableId);	              
-
-    		defUse.setUses(varName); 	          
+    		// catching parameters that are non-primitive type: 
+    		// public void foo(IApplicationContext context)
+    		if( binding == null ) {
+	    		SimpleName varName = var.getName();
+	
+	    		String typeName = var.getType().toString();
+	    		int variableId = i;
+	    		
+				VariableDefUse defUse = new VariableDefUse(varName, 	variableId, typeName);
+				parameterBindings.add(defUse);   	              
+				System.out.println("Set usage of var " + variableId);	              
+	
+	    		defUse.setUses(varName); 	
+    		}
 
     		i+=1;
     	}

@@ -26,12 +26,8 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private static final String FORMATTED_CODE_FILENAME = "./res/html/def-use-index.html";
-	private static final String FORMATTED_CODE_PLACEHOLDER = "<!--***FORMATTED CODE***-->";
     private static final String UNFORMATTED_CODE_PLACEHOLDER = "<!--***CODE***-->";
 
-	private static final String FORMATTED_CODE_TEMPLATE = "<pre class=\"prettyprint\">" 
-	        + FORMATTED_CODE_PLACEHOLDER + "</pre>";
-	
     private static final String DEF_USE_PLACEHOLDER = "<!--***DEF-USE OUTPUT***-->";
     
 	private static final String PARSING_ATTRIBUTE_PLACEHOLDER = "***PARSING_ATTRIBUTE***";
@@ -63,18 +59,17 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 		long time = System.currentTimeMillis();
 
 
-		if( path.startsWith("/DefUse") ) { 
+		if( path.equals("/DefUse") ) { 
 			
 			String code =  aRequest.getParameter("code"); 
 			String parsingAttribute = aRequest.getParameter("parsing-attribute");
 
             aResponse.setContentType("text/html");
-            aResponse.setStatus(HttpServletResponse.SC_OK);
+            aResponse.setStatus(HttpServletResponse.SC_CREATED);
             ServletOutputStream out = aResponse.getOutputStream();
             
             String htmlString = FileUtils.readFileToString(
-            		getWebFileFromBundle(FORMATTED_CODE_FILENAME));
-            
+            		getWebFileFromBundle(FORMATTED_CODE_FILENAME));            
             htmlString = htmlString.replace(PARSING_HTML_PLACEHOLDER, getParsingAttributesHtml());    
                         
             if( code == null ) {
@@ -92,7 +87,8 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 
 		            	System.out.println(code);
 		            	System.out.println("*** " + parsingAttribute + "***");
-			    		String output = DefUse.analyze(AstUtil.createCompilationUnit(code));
+			    		String output = "Result:\n\n"; 
+			    		output = DefUse.analyze(AstUtil.createCompilationUnit(code));
 			    		output = output.replace("\n", "<br>");
 			    		htmlString = htmlString.replace(DEF_USE_PLACEHOLDER, output);
 			    	} catch( CoreException e ) {
@@ -101,11 +97,40 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 			    } else {
 			    	htmlString = htmlString.replace(DEF_USE_PLACEHOLDER, "Arguments good");
 			    }            	
-            }
+            } 
 
             out.print(htmlString);
 			out.close();				
-		} 
+		} else if( path.equals("/DefUseRaw")) {
+			
+			String code =  aRequest.getParameter("code"); 
+			String parsingAttribute = aRequest.getParameter("parsing-attribute");
+
+            aResponse.setContentType("text/plain");
+            aResponse.setStatus(HttpServletResponse.SC_CREATED);
+            ServletOutputStream out = aResponse.getOutputStream();
+
+		    String output = "";
+		    
+            if( code!= null || parsingAttribute != null ) {           
+            	
+			    ParsingAttribute pa = ParsingAttribute.valueOf(parsingAttribute);
+
+			    if( pa == ParsingAttribute.JavaCompilationUnit ){
+			    	try {
+
+		            	System.out.println(code);
+		            	System.out.println("*** " + parsingAttribute + "***");
+			    		output = DefUse.analyze(AstUtil.createCompilationUnit(code));			    				    		
+			    		
+			    	} catch( CoreException e ) {			    		
+			    	}
+			    }           	
+            } 
+
+            out.print(output);
+			out.close();				
+		}
 					
 
 		long diff = (System.currentTimeMillis() - time)/1000;
