@@ -16,14 +16,14 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 public class DefUseVisitor extends ASTVisitor {
     
-    Map<IVariableBinding,VariableDefUse> varBindings = new HashMap<IVariableBinding,VariableDefUse>();
-    List<VariableDefUse> parameterBindings = new ArrayList<VariableDefUse>();
+    Map<IVariableBinding,VariableDef> varBindings = new HashMap<IVariableBinding,VariableDef>();
+    List<VariableDef> parameterBindings = new ArrayList<VariableDef>();
     
-    public Map<IVariableBinding,VariableDefUse> getVarBindings() {
+    public Map<IVariableBinding,VariableDef> getVarBindings() {
         return varBindings;
     }
     
-    public List<VariableDefUse> getParameterBindings() {
+    public List<VariableDef> getParameterBindings() {
         return parameterBindings;
     }    
     
@@ -50,16 +50,18 @@ public class DefUseVisitor extends ASTVisitor {
 	
 	    		String typeName = var.getType().toString();
 	    		int variableId = i;
-	    		
+	    		String parent = varName.getParent().toString();
 	            int charStart = varName.getStartPosition();
 	            int charEnd = charStart + varName.getLength();
+	            String name = varName.getIdentifier();
 	    		
-				VariableDefUse defUse = new VariableDefUse(varName, variableId,
-						typeName, charStart, charEnd);
+				VariableDef defUse = new VariableDef(name, 
+						variableId, typeName, parent,
+						charStart, charEnd);
 				parameterBindings.add(defUse);   	              
 				System.out.println("Set usage of var " + variableId);	              
 	
-	    		defUse.setUses(varName); 	
+	    		defUse.setUses(new VariableUse(name,variableId,typeName,parent,charStart,charEnd)); 	
     		}
 
     		i+=1;
@@ -77,20 +79,23 @@ public class DefUseVisitor extends ASTVisitor {
 
 	    	  IVariableBinding varBinding = (IVariableBinding) binding;
         	  int variableId = varBinding.getVariableId();
-        	  
-        	  VariableDefUse defUse = varBindings.get(varBinding);
+        	  String type = varBinding.getType().getName();
+        	  VariableDef defUse = varBindings.get(varBinding);
+        	  String parent = varName.getParent().toString();     
+        	  String name = varName.getIdentifier();
+              int charStart = varName.getStartPosition();
+              int charEnd = charStart + varName.getLength();
+              
 	          if (defUse == null ) {
-	              int charStart = varName.getStartPosition();
-	              int charEnd = charStart + varName.getLength();
 	              
-	              defUse = new VariableDefUse(varName,
-	                      variableId, varBinding.getType().getName(),
+	              defUse = new VariableDef(name, 
+	                      variableId, type, parent,
 	                      charStart, charEnd);
 	              varBindings.put(varBinding, defUse);   	              
 	              System.out.println("Set usage of var " + variableId);	              
-	          } 
-	          
-              defUse.setUses(varName);     
+	          } else {
+	        	  defUse.setUses(new VariableUse(name,variableId,type,parent,charStart,charEnd));
+	          }
 	          
 	      }   
       }
@@ -118,15 +123,18 @@ public class DefUseVisitor extends ASTVisitor {
               
               int charStart = varName.getStartPosition();
               int charEnd = charStart + varName.getLength();
-              
-              VariableDefUse defUse = new VariableDefUse(varName,
+              String name = varName.getIdentifier();
+              String parent = varName.getParent().toString();              
+            		  
+              VariableDef defUse = new VariableDef(name,
 	                      variableId, binding.getType().getName(),
+	                      parent,
 	                      charStart, charEnd);
 	          varBindings.put(binding, defUse);
 
 	          System.out.println("Set declaration var " + variableId);
   
-	          defUse.setDef(fragment.getName());              
+//	          defUse.setDef(fragment.getName());              
           }
 
      
@@ -150,12 +158,15 @@ public class DefUseVisitor extends ASTVisitor {
             
             int charStart = varName.getStartPosition();
             int charEnd = charStart + varName.getLength();
+            String name = varName.getIdentifier();
+            String parent = varName.getParent().toString();
             
-            VariableDefUse defUse = new VariableDefUse(varName,
-                    variableId+1000, binding.getType().getName(),
+            VariableDef defUse = new VariableDef(name,
+                    variableId, binding.getType().getName(),
+                    parent,
                     charStart, charEnd);
             varBindings.put(binding, defUse);        
-            defUse.setDef(varName);
+//            defUse.setDef(varName);
             
             System.out.println("Set declaration field " + variableId);	        
 	  }			    	  
