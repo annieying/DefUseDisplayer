@@ -49,4 +49,9 @@ public class VariableDef {
     public String getParent() {
     	return def.getParent();
     }
+    
+    @Override
+    public String toString() {
+    	return "Def: " + def + "\n" + "Uses: " + uses;
+    }
 }

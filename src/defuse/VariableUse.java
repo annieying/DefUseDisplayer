@@ -48,4 +48,9 @@ public class VariableUse {
     public String getParent() {
     	return parent;
     }
+    
+    @Override
+    public String toString() {
+    	return name + " as in (" + parent + ")"; 
+    }
 }

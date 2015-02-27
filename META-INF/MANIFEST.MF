@@ -19,4 +19,5 @@ Bundle-ClassPath: .,
  lib/jericho-annie-modified.jar,
  lib/jetty-6.1.26.jar,
  lib/jetty-util-6.1.26.jar,
- lib/servlet-api-2.5-20081211.jar
+ lib/servlet-api-2.5-20081211.jar,
+ lib/gson-2.3.jar
