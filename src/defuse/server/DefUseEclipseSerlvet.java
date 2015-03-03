@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 
 import defuse.AstUtil;
-import defuse.DefUse;
+import defuse.DefUseAnalyzer;
 
 public class DefUseEclipseSerlvet extends HttpServlet {
 
@@ -86,7 +86,7 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 		            	System.out.println(code);
 		            	System.out.println("*** " + parsingAttribute + "***");
 			    		String output = "Result:\n\n"; 
-			    		output = DefUse.analyze(AstUtil.createCompilationUnit(code));
+			    		output = DefUseAnalyzer.analyze(AstUtil.createCompilationUnit(code));
 			    		output = output.replace("\n", "<br>");
 			    		htmlString = htmlString.replace(DEF_USE_PLACEHOLDER, output);			    		
 			    	} catch( CoreException e ) {			    		
@@ -118,7 +118,7 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 
 		            	System.out.println(code);
 		            	System.out.println("*** " + parsingAttribute + "***");
-			    		output = DefUse.analyze(AstUtil.createCompilationUnit(code));			    				    		
+			    		output = DefUseAnalyzer.analyze(AstUtil.createCompilationUnit(code));			    				    		
 			    		
 			    	} catch( CoreException e ) {			    		
 			    	}

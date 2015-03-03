@@ -9,9 +9,8 @@ import java.util.Map.Entry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.IVariableBinding;
-import org.eclipse.jdt.core.dom.SimpleName;
 
-public class DefUse {
+public class DefUseAnalyzer {
     
     public static String analyze(ICompilationUnit unit) {
     	System.out.println("DefUse.analyze");
@@ -82,21 +81,24 @@ public class DefUse {
          String varName = def.getName();
          String parentName = def.getParent();
                   
-         String message = typeOfVar + " #" + variableId 
-         		+ " '" + varName + "' " 
-         		+ " of type " + typeName + " ";
+//         String message = typeOfVar + " #" + variableId 
+//         		+ " '" + varName + "' " 
+//         		+ " of type " + typeName + " ";
+//         
+//         message += varName.equals(parentName) ? 
+//         		"\n" : 
+//         		" (as in \"" + parentName +"\") " 
+//         			+ " [" + def.getCharStart() + "," + def.getCharEnd() + "] " + "\n";            
+//         
+//         for( VariableUse ref : def.getUses() ) {
+//         	String refParentName = ref.getParent();            	
+//            message += "  * used in \"" + refParentName + "\"\n";
+//
+//         }
+//         message += "\n";
+       
+         String message = VariableDef.toJson(def);
          
-         message += varName.equals(parentName) ? 
-         		"\n" : 
-         		" (as in \"" + parentName +"\") " 
-         			+ " [" + def.getCharStart() + "," + def.getCharEnd() + "] " + "\n";            
-         
-         for( VariableUse ref : def.getUses() ) {
-         	String refParentName = ref.getParent();            	
-            message += "  * used in \"" + refParentName + "\"\n";
-
-         }
-         message += "\n";
          return message;
     }
     

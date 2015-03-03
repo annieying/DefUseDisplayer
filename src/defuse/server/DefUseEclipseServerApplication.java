@@ -19,7 +19,7 @@ public class DefUseEclipseServerApplication implements IApplication {
 		System.out.println("inside DefUseEclipseServerApplication");
 		System.out.println("Workspace in " + ResourcesPlugin.getWorkspace().getRoot().getLocation().toString());
 
-		Server server = new Server(8844);
+		Server server = new Server(8845);
 		Context root = new Context(server,"/",Context.SESSIONS);
 		root.addServlet(new ServletHolder(new  DefUseEclipseSerlvet()), "/*");	 
 		server.start();

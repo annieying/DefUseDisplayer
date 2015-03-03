@@ -8,7 +8,7 @@ public class Application implements IApplication {
     @Override
     public Object start(IApplicationContext context)
             throws Exception {        
-        DefUse.analyze(AstUtil.getCompilationUnit());
+        DefUseAnalyzer.analyze(AstUtil.getCompilationUnit());
         return IApplication.EXIT_OK;
     }
 
