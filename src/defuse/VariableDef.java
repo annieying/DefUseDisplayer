@@ -18,7 +18,7 @@ public class VariableDef {
 	public static String toJson(VariableDef def) {
 		Gson gson = new GsonBuilder()
 			.setPrettyPrinting()
-			.disableHtmlEscaping()
+//			.disableHtmlEscaping()
 			.create(); 
 		String json = gson.toJson(def);
 		

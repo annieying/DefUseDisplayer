@@ -76,11 +76,11 @@ public class DefUseAnalyzer {
     }
     
     public static String outputMessage(VariableDef def, String typeOfVar) {
-    	 int variableId = def.getVariableId();
-         String typeName = def.getType();            
-         String varName = def.getName();
-         String parentName = def.getParent();
-                  
+//    	 int variableId = def.getVariableId();
+//         String typeName = def.getType();            
+//         String varName = def.getName();
+//         String parentName = def.getParent();
+//                  
 //         String message = typeOfVar + " #" + variableId 
 //         		+ " '" + varName + "' " 
 //         		+ " of type " + typeName + " ";

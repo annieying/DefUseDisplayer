@@ -35,7 +35,7 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 			+ PARSING_ATTRIBUTE_PLACEHOLDER + "<br>";
 	private static final String PARSING_HTML_PLACEHOLDER = "<!--***PARSING_ATTRIBUTES***-->";
 	
-	enum  ParsingAttribute {
+	enum ParsingAttribute {
 		JavaClassBodyMemberDeclaration,
 		JavaCompilationUnit,
 		JavaBlockStatements,
@@ -43,95 +43,107 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 		JavaMethodDeclaration
 	}
 	
+	enum Format {
+		ui,
+		json
+	}
+	
     public void doGet(HttpServletRequest aRequest, HttpServletResponse aResponse) 
             throws ServletException, IOException {
-        doPost(aRequest, aResponse);
+
+		String code =  aRequest.getParameter("code"); 
+		String parsingAttributeString = aRequest.getParameter("parsing-attribute");
+		String formatString = aRequest.getParameter("format");
+		
+		ParsingAttribute parsingAttribute = parsingAttributeString == null ? 
+				ParsingAttribute.JavaCompilationUnit : ParsingAttribute.valueOf(parsingAttributeString);
+		Format format = formatString==null ? Format.ui : Format.valueOf(formatString);
+		
+        process(aRequest, aResponse, code, parsingAttribute, format);
     }
 	
 	public void doPost(HttpServletRequest aRequest, HttpServletResponse aResponse)
 			throws ServletException, IOException {
+		
+		String code =  aRequest.getParameter("code"); 
+		String parsingAttributeString = aRequest.getParameter("parsing-attribute");
+		String formatString = aRequest.getParameter("format");
+		
+		ParsingAttribute parsingAttribute = parsingAttributeString == null ? 
+				ParsingAttribute.JavaCompilationUnit : ParsingAttribute.valueOf(parsingAttributeString);
+		Format format = formatString==null ? Format.ui : Format.valueOf(formatString);
+		
+        process(aRequest, aResponse, code, parsingAttribute, format);
+	}
+	
+	public void process(HttpServletRequest aRequest, HttpServletResponse aResponse,
+			String code, ParsingAttribute parsingAttribute, Format format)
+			throws ServletException, IOException {
+
 		String path = aRequest.getPathInfo();
-		String url = aRequest.getRequestURL().toString();
-		int colon = url.lastIndexOf(":") + 1;
-		int end = url.indexOf("/", colon);
-		String hostAndPort = url.substring("http://".length(), end);
-		long time = System.currentTimeMillis();
-
-
-		if( path.equals("/DefUse") ) { 
-			
-			String code =  aRequest.getParameter("code"); 
-			String parsingAttribute = aRequest.getParameter("parsing-attribute");
-
-            aResponse.setContentType("text/html");
+		long time = System.currentTimeMillis();		
+		
+		String htmlString = "";
+        String jsonOutput = "";
+		
+		if( path.equals("/DefUse") ) {			
+					
             aResponse.setStatus(HttpServletResponse.SC_CREATED);
             ServletOutputStream out = aResponse.getOutputStream();
+                                    
+            try {
+            	jsonOutput = DefUseAnalyzer.analyze(AstUtil.createCompilationUnit(code));
+            } catch (CoreException e) {}
             
-            String htmlString = FileUtils.readFileToString(
-            		getWebFileFromBundle(FORMATTED_CODE_FILENAME));            
-            htmlString = htmlString.replace(PARSING_HTML_PLACEHOLDER, getParsingAttributesHtml());    
-                        
-            if( code == null ) {
-            	htmlString = htmlString.replace(UNFORMATTED_CODE_PLACEHOLDER, "");
-            } else {            	
-            	htmlString = htmlString.replace(UNFORMATTED_CODE_PLACEHOLDER, code);
-            }
+			if( format == Format.json ) {
+				aResponse.setContentType("application/json");
+				htmlString = jsonOutput;
+			} else {
+				aResponse.setContentType("text/html");
+				jsonOutput = jsonOutput.replace("\n", "<br>");
+	            htmlString = getHtmlString(code, parsingAttribute).
+	            		replace(DEF_USE_PLACEHOLDER, jsonOutput);
+			}            
             
-            if( parsingAttribute != null ) {           
-            	
-			    ParsingAttribute pa = ParsingAttribute.valueOf(parsingAttribute);
-			    
-			    if( pa == ParsingAttribute.JavaCompilationUnit ){
-			    	try {			    		
-		            	System.out.println(code);
-		            	System.out.println("*** " + parsingAttribute + "***");
-			    		String output = "Result:\n\n"; 
-			    		output = DefUseAnalyzer.analyze(AstUtil.createCompilationUnit(code));
-			    		output = output.replace("\n", "<br>");
-			    		htmlString = htmlString.replace(DEF_USE_PLACEHOLDER, output);			    		
-			    	} catch( CoreException e ) {			    		
-			    	}
-			    } else {
-			    	htmlString = htmlString.replace(DEF_USE_PLACEHOLDER, "Arguments good");
-			    }            	
-            } 
-
             out.print(htmlString);
 			out.close();				
-		} else if( path.equals("/DefUseRaw")) {
-			
-			String code =  aRequest.getParameter("code"); 
-			String parsingAttribute = aRequest.getParameter("parsing-attribute");
-
-            aResponse.setContentType("text/plain");
-            aResponse.setStatus(HttpServletResponse.SC_CREATED);
-            ServletOutputStream out = aResponse.getOutputStream();
-
-		    String output = "";
-		    
-            if( code!= null || parsingAttribute != null ) {           
-            	
-			    ParsingAttribute pa = ParsingAttribute.valueOf(parsingAttribute);
-
-			    if( pa == ParsingAttribute.JavaCompilationUnit ){
-			    	try {
-
-		            	System.out.println(code);
-		            	System.out.println("*** " + parsingAttribute + "***");
-			    		output = DefUseAnalyzer.analyze(AstUtil.createCompilationUnit(code));			    				    		
-			    		
-			    	} catch( CoreException e ) {			    		
-			    	}
-			    }           	
-            } 
-
-            out.print(output);
-			out.close();				
-		}
+		} 
 					
 
 		long diff = (System.currentTimeMillis() - time)/1000;
 		System.out.println("page loaded in " + diff + " s" );
+	}
+	
+	private static String getHtmlString(String code, ParsingAttribute parsingAttribute)
+			throws IOException {
+		
+        String htmlString = FileUtils.readFileToString(
+        		getWebFileFromBundle(FORMATTED_CODE_FILENAME));            
+        htmlString = htmlString.replace(PARSING_HTML_PLACEHOLDER, getParsingAttributesHtml());    
+                    
+        if( code == null ) {
+        	htmlString = htmlString.replace(UNFORMATTED_CODE_PLACEHOLDER, "");
+        } else {            	
+        	htmlString = htmlString.replace(UNFORMATTED_CODE_PLACEHOLDER, code);
+        }
+                        			    
+	    if( parsingAttribute == ParsingAttribute.JavaCompilationUnit ){
+	    	try {			    		
+            	System.out.println(code);
+            	System.out.println("*** " + parsingAttribute + "***");
+	    		String output = "Result:\n\n"; 
+	    		output += "<pre>\n";
+	    		output += DefUseAnalyzer.analyze(AstUtil.createCompilationUnit(code));
+	    		output = output.replace("\n", "<br>");
+	    		output += "</pre>\n";
+	    		htmlString = htmlString.replace(DEF_USE_PLACEHOLDER, output);			    		
+	    	} catch( CoreException e ) {			    		
+	    	}
+	    } else {
+	    	htmlString = htmlString.replace(DEF_USE_PLACEHOLDER, "Choose parsing attributes");
+	    }         
+	    
+	    return htmlString;
 	}
 	
     public static File getWebFileFromBundle(String path) {
