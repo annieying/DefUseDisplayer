@@ -1,6 +1,7 @@
 package defuse;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,57 +26,62 @@ public class DefUseAnalyzer {
         
         System.out.println("Visited AST");
         
-        String message = "";
+        Collection<VariableDef> defs = new ArrayList<VariableDef>();
+        defs.addAll(printer.getVarBindings().values());
+        defs.addAll(printer.getParameterBindings());
         
-        message += outputMessages(printer.getVarBindings());
-        message += outputMessages(printer.getParameterBindings());
+        String message = outputMessagesForListOfDefs(defs);
    
         return message;
     }
-        
-    public static String outputMessages(List<VariableDef> bindings) {
-    	
-    	List<String> messages = new ArrayList<String>();
-        for( VariableDef e : bindings ) {
-
-            VariableDef defUse = e;
-            String message = outputMessage(e, "Parameter");
-            messages.add(message);
-        } 
-        
-        Collections.sort(messages);
-        
-        String finalMessage = "";
-        for(String m : messages ) {
-        	finalMessage += m;
-        }
-        		
-        return finalMessage;
-    }
     
-    public static String outputMessages(Map<IVariableBinding,VariableDef> bindings) {
-    	
-    	List<String> messages = new ArrayList<String>();
-        for( Entry<IVariableBinding, VariableDef> e : bindings.entrySet()) {
-
-            VariableDef defUse = e.getValue();
-                        
-            String typeOfVar = getTypeOfVariable(e.getKey()).toUpperCase();
-            String message = outputMessage(defUse, typeOfVar);            
-            messages.add(message);
-        } 
-        
-        Collections.sort(messages);
-        
-        String finalMessage = "";
-        for(String m : messages ) {
-        	finalMessage += m;
-        }
-        		
-        return finalMessage;
+    public static String outputMessagesForListOfDefs(Collection<VariableDef> defs) {
+    	String json = VariableDef.toJson(defs);
+    	return json;
     }
-    
-    public static String outputMessage(VariableDef def, String typeOfVar) {
+            
+//    public static String outputMessagesForParameters(Collection<VariableDef> bindings) {
+//    	
+//    	List<String> messages = new ArrayList<String>();
+//        for( VariableDef e : bindings ) {
+//
+//            String message = outputMessage(e, "Parameter");
+//            messages.add(message);
+//        } 
+//        
+//        Collections.sort(messages);
+//        
+//        String finalMessage = "";
+//        for(String m : messages ) {
+//        	finalMessage += m;
+//        }
+//        		
+//        return finalMessage;
+//    }
+//    
+//    public static String outputMessagesForBindings(Map<IVariableBinding,VariableDef> bindings) {
+//    	
+//    	List<String> messages = new ArrayList<String>();
+//        for( Entry<IVariableBinding, VariableDef> e : bindings.entrySet()) {
+//
+//            VariableDef defUse = e.getValue();
+//                        
+//            String typeOfVar = getTypeOfVariable(e.getKey()).toUpperCase();
+//            String message = outputMessage(defUse, typeOfVar);            
+//            messages.add(message);
+//        } 
+//        
+//        Collections.sort(messages);
+//        
+//        String finalMessage = "";
+//        for(String m : messages ) {
+//        	finalMessage += m;
+//        }
+//        		
+//        return finalMessage;
+//    }
+//    
+//    public static String outputMessage(VariableDef def, String typeOfVar) {
 //    	 int variableId = def.getVariableId();
 //         String typeName = def.getType();            
 //         String varName = def.getName();
@@ -96,11 +102,10 @@ public class DefUseAnalyzer {
 //
 //         }
 //         message += "\n";
-       
-         String message = VariableDef.toJson(def);
-         
-         return message;
-    }
+//       
+//         
+//         return message;
+//    }
     
     public static String getTypeOfVariable(IVariableBinding binding) {
     	if ( binding.isField() ) {

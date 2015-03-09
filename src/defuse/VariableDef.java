@@ -1,10 +1,15 @@
 package defuse;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 public class VariableDef {
     private VariableUse def;
@@ -15,21 +20,34 @@ public class VariableDef {
         this.def=new VariableUse(name,variableId,type,parent,charStart,charEnd);
     }
     
-	public static String toJson(VariableDef def) {
+	public static String toJson(Collection<VariableDef> defs) {
 		Gson gson = new GsonBuilder()
 			.setPrettyPrinting()
-//			.disableHtmlEscaping()
+			.disableHtmlEscaping()
 			.create(); 
-		String json = gson.toJson(def);
+		String json = gson.toJson(defs);
 		
 		return json;
 	}
 	
-	public static VariableDef fromJson(String json) {
+	public static String toJson(List<VariableDef> defs) {
+		Gson gson = new GsonBuilder()
+			.setPrettyPrinting()
+			.disableHtmlEscaping()
+			.create(); 
+		String json = gson.toJson(defs);
+		
+		return json;
+	}
+	
+	public static List<VariableDef> fromJson(String json) {
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		Gson gson = gsonBuilder.create();
-		VariableDef def = gson.fromJson(json, VariableDef.class);	    
-	    return def;
+		
+		Type listType = new TypeToken<ArrayList<VariableDef>>() {}.getType();
+		
+		List<VariableDef> defs = gson.fromJson(json, listType);	    
+	    return defs;
 	}
     
     public String getName() {
