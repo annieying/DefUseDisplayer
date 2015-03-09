@@ -4,17 +4,17 @@ package defuse;
 public class VariableUse {
     private String name;
     private String type;
-    private int variableId;
+    private String nodeType;
     private int charStart;
     private int charEnd;   
     private String parent;
     
-    public VariableUse( String name, int variableId, String type,
+    public VariableUse( String name, String nodeType, String type,
     		String parent,
     		int charStart, int charEnd ) {
         this.name=name;
         this.type = type;
-        this.variableId = variableId;
+        this.nodeType = nodeType;
         this.charStart = charStart;
         this.charEnd = charEnd;
         this.parent = parent.trim();
@@ -32,9 +32,9 @@ public class VariableUse {
         return type;
     }
 
-    public int getVariableId()
+    public String getNodeType()
     {
-        return variableId;
+        return nodeType;
     }
     
     public int getCharStart() {

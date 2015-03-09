@@ -14,8 +14,8 @@ public class GsonTest {
 	@Test
 	public void testToJson() {
 		
-		VariableUse use = new VariableUse("a",1,"int", "b=a+a;", 6,9);
-		VariableDef def = new VariableDef("a", 2, "int" , "int a=1;", 1,3);
+		VariableUse use = new VariableUse("a", "","int", "b=a+a;", 6,9);
+		VariableDef def = new VariableDef("a", "", "int" , "int a=1;", 1,3);
 		def.setUses(use);
 		List<VariableDef> defs = new ArrayList<VariableDef>();
 		defs.add(def);
@@ -34,7 +34,6 @@ public class GsonTest {
 		
 		Assert.assertEquals("a", def.getName());
 		Assert.assertEquals("int", def.getType());
-		Assert.assertEquals(2, def.getVariableId());
 		Assert.assertEquals("int a=1;", def.getParent());
 		
 		Set<VariableUse> uses = def.getUses();

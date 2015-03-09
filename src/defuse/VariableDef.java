@@ -15,9 +15,9 @@ public class VariableDef {
     private VariableUse def;
     private Set<VariableUse> uses = new HashSet<VariableUse>();
     
-    public VariableDef( String name, int variableId, String type, String parent,
+    public VariableDef( String name, String nodeType, String type, String parent,
     		int charStart, int charEnd ) {
-        this.def=new VariableUse(name,variableId,type,parent,charStart,charEnd);
+        this.def=new VariableUse(name,nodeType,type,parent,charStart,charEnd);
     }
     
 	public static String toJson(Collection<VariableDef> defs) {
@@ -72,8 +72,8 @@ public class VariableDef {
         return def.getType();
     }
 
-    public int getVariableId() {
-        return def.getVariableId();
+    public String getNodeType() {
+        return def.getNodeType();
     }
     
     public int getCharStart() {

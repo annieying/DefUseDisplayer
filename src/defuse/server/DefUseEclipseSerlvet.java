@@ -58,6 +58,7 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 		ParsingAttribute parsingAttribute = parsingAttributeString == null ? 
 				ParsingAttribute.JavaCompilationUnit : ParsingAttribute.valueOf(parsingAttributeString);
 		Format format = formatString==null ? Format.ui : Format.valueOf(formatString);
+		code = code==null ? "" : code;
 		
         process(aRequest, aResponse, code, parsingAttribute, format);
     }
@@ -72,6 +73,7 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 		ParsingAttribute parsingAttribute = parsingAttributeString == null ? 
 				ParsingAttribute.JavaCompilationUnit : ParsingAttribute.valueOf(parsingAttributeString);
 		Format format = formatString==null ? Format.ui : Format.valueOf(formatString);
+		code = code==null ? "" : code;
 		
         process(aRequest, aResponse, code, parsingAttribute, format);
 	}
@@ -93,7 +95,9 @@ public class DefUseEclipseSerlvet extends HttpServlet {
                                     
             try {
             	jsonOutput = DefUseAnalyzer.analyze(AstUtil.createCompilationUnit(code));
-            } catch (CoreException e) {}
+            } catch (CoreException e) {
+            	e.printStackTrace();
+            }
             
 			if( format == Format.json ) {
 				aResponse.setContentType("application/json");

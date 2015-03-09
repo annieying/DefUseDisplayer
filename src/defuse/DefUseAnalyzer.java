@@ -2,18 +2,24 @@ package defuse;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.IVariableBinding;
 
 public class DefUseAnalyzer {
-    
+	
     public static String analyze(ICompilationUnit unit) {
+    	System.out.println("DefUse.analyze");
+
+        Collection<VariableDef> defs = analyzeReturnList(unit);
+        
+        String message = outputMessagesForListOfDefs(defs);
+   
+        return message;
+    }
+    
+    public static Collection<VariableDef> analyzeReturnList(ICompilationUnit unit) {
     	System.out.println("DefUse.analyze");
 
         DefUseVisitor printer = new DefUseVisitor();
@@ -28,12 +34,11 @@ public class DefUseAnalyzer {
         
         Collection<VariableDef> defs = new ArrayList<VariableDef>();
         defs.addAll(printer.getVarBindings().values());
-        defs.addAll(printer.getParameterBindings());
+//        defs.addAll(printer.getParameterBindings());
         
-        String message = outputMessagesForListOfDefs(defs);
-   
-        return message;
+	    return defs;
     }
+
     
     public static String outputMessagesForListOfDefs(Collection<VariableDef> defs) {
     	String json = VariableDef.toJson(defs);
