@@ -2,29 +2,62 @@ package defuse;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.IVariableBinding;
 
+import defuse.server.Strategy;
+
 public class DefUseAnalyzer {
-	
+
+    public static String analyze(String code, Strategy strategy) {
+    	System.out.println("DefUse.analyze");
+
+    	String message = "";
+		try {
+			
+			ASTNode ast = getCompilationUnit(code, strategy);			
+			Collection<VariableDef> defs = analyzeReturnList(ast);			
+			message = outputMessagesForListOfDefs(defs);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+   
+        return message;
+    }
+
     public static String analyze(ICompilationUnit unit) {
     	System.out.println("DefUse.analyze");
 
-        Collection<VariableDef> defs = analyzeReturnList(unit);
-        
-        String message = outputMessagesForListOfDefs(defs);
+    	String message = "";
+			
+		ASTNode ast = AstUtil.getEclipseAst(unit);			
+		Collection<VariableDef> defs = analyzeReturnList(ast);			
+		message = outputMessagesForListOfDefs(defs);
    
         return message;
     }
     
-    public static Collection<VariableDef> analyzeReturnList(ICompilationUnit unit) {
+
+    public static Collection<VariableDef> analyzeReturnList(String code, Strategy strategy) {
+    	try { 
+    		ASTNode ast = getCompilationUnit(code, strategy);
+    		return analyzeReturnList(ast);
+    	} catch(CoreException e) {
+    		e.printStackTrace();
+    	}
+    	return Collections.EMPTY_LIST;
+    }
+    
+    
+    public static Collection<VariableDef> analyzeReturnList(ASTNode ast) {
     	System.out.println("DefUse.analyze");
 
         DefUseVisitor printer = new DefUseVisitor();
     	try {
-            ASTNode ast = AstUtil.getEclipseAst(unit);
 	        ast.accept(printer);
     	} catch(Throwable e ) {
     		e.printStackTrace();
@@ -39,78 +72,22 @@ public class DefUseAnalyzer {
 	    return defs;
     }
 
+    public static ASTNode getCompilationUnit(String code, Strategy strategy) 
+    	throws CoreException {
+    	ASTNode ast = null;
+    	if( strategy == Strategy.eclipse) {
+    		ICompilationUnit cu = AstUtil.createCompilationUnit(code);
+    		ast = AstUtil.getEclipseAst(cu);
+    	} else if ( strategy == Strategy.ppa) {
+    		ast = AstUtil.getPpaAst(code);
+    	}
+    	return ast;
+    }
     
     public static String outputMessagesForListOfDefs(Collection<VariableDef> defs) {
     	String json = VariableDef.toJson(defs);
     	return json;
     }
-            
-//    public static String outputMessagesForParameters(Collection<VariableDef> bindings) {
-//    	
-//    	List<String> messages = new ArrayList<String>();
-//        for( VariableDef e : bindings ) {
-//
-//            String message = outputMessage(e, "Parameter");
-//            messages.add(message);
-//        } 
-//        
-//        Collections.sort(messages);
-//        
-//        String finalMessage = "";
-//        for(String m : messages ) {
-//        	finalMessage += m;
-//        }
-//        		
-//        return finalMessage;
-//    }
-//    
-//    public static String outputMessagesForBindings(Map<IVariableBinding,VariableDef> bindings) {
-//    	
-//    	List<String> messages = new ArrayList<String>();
-//        for( Entry<IVariableBinding, VariableDef> e : bindings.entrySet()) {
-//
-//            VariableDef defUse = e.getValue();
-//                        
-//            String typeOfVar = getTypeOfVariable(e.getKey()).toUpperCase();
-//            String message = outputMessage(defUse, typeOfVar);            
-//            messages.add(message);
-//        } 
-//        
-//        Collections.sort(messages);
-//        
-//        String finalMessage = "";
-//        for(String m : messages ) {
-//        	finalMessage += m;
-//        }
-//        		
-//        return finalMessage;
-//    }
-//    
-//    public static String outputMessage(VariableDef def, String typeOfVar) {
-//    	 int variableId = def.getVariableId();
-//         String typeName = def.getType();            
-//         String varName = def.getName();
-//         String parentName = def.getParent();
-//                  
-//         String message = typeOfVar + " #" + variableId 
-//         		+ " '" + varName + "' " 
-//         		+ " of type " + typeName + " ";
-//         
-//         message += varName.equals(parentName) ? 
-//         		"\n" : 
-//         		" (as in \"" + parentName +"\") " 
-//         			+ " [" + def.getCharStart() + "," + def.getCharEnd() + "] " + "\n";            
-//         
-//         for( VariableUse ref : def.getUses() ) {
-//         	String refParentName = ref.getParent();            	
-//            message += "  * used in \"" + refParentName + "\"\n";
-//
-//         }
-//         message += "\n";
-//       
-//         
-//         return message;
-//    }
     
     public static String getTypeOfVariable(IVariableBinding binding) {
     	if ( binding.isField() ) {

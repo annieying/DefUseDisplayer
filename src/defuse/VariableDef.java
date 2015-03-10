@@ -50,6 +50,18 @@ public class VariableDef {
 	    return defs;
 	}
     
+	public static VariableDef getDef(Collection<VariableDef> defs, String name,
+			int charStart, int charEnd) {
+		for( VariableDef def : defs) {
+			if( def.getName().equals(name) && 
+					def.getCharStart() == charStart &&
+					def.getCharEnd() == charEnd ) {
+				return def;
+			}
+		}
+		return null;
+	}
+	
     public String getName() {
         return def.getName();
     }
@@ -91,5 +103,11 @@ public class VariableDef {
     @Override
     public String toString() {
     	return "Def: " + def + "\n" + "Uses: " + uses;
+    }
+    
+    @Override
+    public int hashCode() {
+    	String hash = def.getName() + "/" + getCharStart() + "/" + getCharEnd();
+    	return hash.hashCode();
     }
 }

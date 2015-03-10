@@ -13,11 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 
-import defuse.AstUtil;
 import defuse.DefUseAnalyzer;
 
 public class DefUseEclipseSerlvet extends HttpServlet {
@@ -50,37 +48,34 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 	
     public void doGet(HttpServletRequest aRequest, HttpServletResponse aResponse) 
             throws ServletException, IOException {
-
-		String code =  aRequest.getParameter("code"); 
-		String parsingAttributeString = aRequest.getParameter("parsing-attribute");
-		String formatString = aRequest.getParameter("format");
-		
-		ParsingAttribute parsingAttribute = parsingAttributeString == null ? 
-				ParsingAttribute.JavaCompilationUnit : ParsingAttribute.valueOf(parsingAttributeString);
-		Format format = formatString==null ? Format.ui : Format.valueOf(formatString);
-		code = code==null ? "" : code;
-		
-        process(aRequest, aResponse, code, parsingAttribute, format);
+    	process(aRequest, aResponse);
     }
 	
 	public void doPost(HttpServletRequest aRequest, HttpServletResponse aResponse)
+			throws ServletException, IOException {		
+		process(aRequest, aResponse);
+	}
+	
+	public void process(HttpServletRequest aRequest, HttpServletResponse aResponse) 
 			throws ServletException, IOException {
-		
 		String code =  aRequest.getParameter("code"); 
+		
 		String parsingAttributeString = aRequest.getParameter("parsing-attribute");
 		String formatString = aRequest.getParameter("format");
+		String strategyString = aRequest.getParameter("strategy");
 		
 		ParsingAttribute parsingAttribute = parsingAttributeString == null ? 
 				ParsingAttribute.JavaCompilationUnit : ParsingAttribute.valueOf(parsingAttributeString);
 		Format format = formatString==null ? Format.ui : Format.valueOf(formatString);
-		code = code==null ? "" : code;
-		
-        process(aRequest, aResponse, code, parsingAttribute, format);
+		Strategy strategy = strategyString==null ? Strategy.eclipse : Strategy.valueOf(strategyString);
+			
+	    process(aRequest, aResponse, code, parsingAttribute, format, strategy);
+	
 	}
 	
 	public void process(HttpServletRequest aRequest, HttpServletResponse aResponse,
-			String code, ParsingAttribute parsingAttribute, Format format)
-			throws ServletException, IOException {
+			String code, ParsingAttribute parsingAttribute, Format format,
+			Strategy strategy) throws ServletException, IOException {
 
 		String path = aRequest.getPathInfo();
 		long time = System.currentTimeMillis();		
@@ -92,12 +87,8 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 					
             aResponse.setStatus(HttpServletResponse.SC_CREATED);
             ServletOutputStream out = aResponse.getOutputStream();
-                                    
-            try {
-            	jsonOutput = DefUseAnalyzer.analyze(AstUtil.createCompilationUnit(code));
-            } catch (CoreException e) {
-            	e.printStackTrace();
-            }
+      	         	            	
+            jsonOutput = getResult(code, strategy);
             
 			if( format == Format.json ) {
 				aResponse.setContentType("application/json");
@@ -131,23 +122,25 @@ public class DefUseEclipseSerlvet extends HttpServlet {
         	htmlString = htmlString.replace(UNFORMATTED_CODE_PLACEHOLDER, code);
         }
                         			    
-	    if( parsingAttribute == ParsingAttribute.JavaCompilationUnit ){
-	    	try {			    		
-            	System.out.println(code);
-            	System.out.println("*** " + parsingAttribute + "***");
-	    		String output = "Result:\n\n"; 
-	    		output += "<pre>\n";
-	    		output += DefUseAnalyzer.analyze(AstUtil.createCompilationUnit(code));
-	    		output = output.replace("\n", "<br>");
-	    		output += "</pre>\n";
-	    		htmlString = htmlString.replace(DEF_USE_PLACEHOLDER, output);			    		
-	    	} catch( CoreException e ) {			    		
-	    	}
+	    if( parsingAttribute == ParsingAttribute.JavaCompilationUnit ){		    		
+        	System.out.println(code);
+        	System.out.println("*** " + parsingAttribute + "***");    		
+
 	    } else {
 	    	htmlString = htmlString.replace(DEF_USE_PLACEHOLDER, "Choose parsing attributes");
 	    }         
 	    
 	    return htmlString;
+	}
+	
+	private static String getResult(String code, Strategy strategy) {
+		String output = "Result:\n\n"; 
+		output += "<pre>\n";
+		output += code == null ? "" : DefUseAnalyzer.analyze(code, strategy);
+		output = output.replace("\n", "<br>");
+		output += "</pre>\n";
+		return output;
+		
 	}
 	
     public static File getWebFileFromBundle(String path) {
