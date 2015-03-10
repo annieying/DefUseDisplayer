@@ -14,7 +14,6 @@ import defuse.server.Strategy;
 public class DefUseAnalyzer {
 
     public static String analyze(String code, Strategy strategy) {
-    	System.out.println("DefUse.analyze");
 
     	String message = "";
 		try {
@@ -30,8 +29,6 @@ public class DefUseAnalyzer {
     }
 
     public static String analyze(ICompilationUnit unit) {
-    	System.out.println("DefUse.analyze");
-
     	String message = "";
 			
 		ASTNode ast = AstUtil.getEclipseAst(unit);			
@@ -54,7 +51,6 @@ public class DefUseAnalyzer {
     
     
     public static Collection<VariableDef> analyzeReturnList(ASTNode ast) {
-    	System.out.println("DefUse.analyze");
 
         DefUseVisitor printer = new DefUseVisitor();
     	try {
@@ -62,9 +58,7 @@ public class DefUseAnalyzer {
     	} catch(Throwable e ) {
     		e.printStackTrace();
     	}
-        
-        System.out.println("Visited AST");
-        
+                
         Collection<VariableDef> defs = new ArrayList<VariableDef>();
         defs.addAll(printer.getVarBindings().values());
 //        defs.addAll(printer.getParameterBindings());

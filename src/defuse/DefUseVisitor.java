@@ -1,14 +1,18 @@
 package defuse;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
@@ -17,15 +21,11 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 public class DefUseVisitor extends ASTVisitor {
 
 	Map<IVariableBinding,VariableDef> varBindings = new HashMap<IVariableBinding,VariableDef>();
-//	List<VariableDef> parameterBindings = new ArrayList<VariableDef>();
+	List<VariableUse> otherSymbols = new ArrayList<VariableUse>();
 
 	public Map<IVariableBinding,VariableDef> getVarBindings() {
 		return varBindings;
-	}
-
-//	public List<VariableDef> getParameterBindings() {
-//		return parameterBindings;
-//	}    
+	}  
 
 	////////////////////////// variable declaration ///////////////////////////////////
 
@@ -59,12 +59,8 @@ public class DefUseVisitor extends ASTVisitor {
 					charStart, charEnd);
 			varBindings.put(binding, defUse);   	              
 			System.out.println("Set usage of var " + name);	              
-
-			//	    		defUse.setUses(new VariableUse(name,nodeType,typeName,parent,charStart,charEnd)); 	
 		}
 
-		//    		i+=1;
-		//    	}
 		return true;
 	}
 
@@ -89,14 +85,11 @@ public class DefUseVisitor extends ASTVisitor {
 				if (defUse == null ) {	              
 					defUse = new VariableDef(name, nodeType, type, parent,
 							charStart, charEnd);
-					varBindings.put(varBinding, defUse);   	              
-					System.out.println("Set usage of var " + name);	              
-				} else {
-					defUse.setUses(new VariableUse(name, nodeType, type, parent,
-							charStart, charEnd));
-				}	 
-			}   	 
+					varBindings.put(varBinding, defUse);            
+				}
+			} 
 		}   
+		
 
 		return true;
 	}
