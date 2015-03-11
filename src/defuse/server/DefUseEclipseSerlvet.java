@@ -88,12 +88,13 @@ public class DefUseEclipseSerlvet extends HttpServlet {
             aResponse.setStatus(HttpServletResponse.SC_CREATED);
             ServletOutputStream out = aResponse.getOutputStream();
       	         	            	
-            jsonOutput = getResult(code, strategy);
+            jsonOutput = code == null ? "" : DefUseAnalyzer.analyze(code, strategy);
             
 			if( format == Format.json ) {
 				aResponse.setContentType("application/json");
 				htmlString = jsonOutput;
 			} else {
+	            jsonOutput = getResult(code, strategy);
 				aResponse.setContentType("text/html");
 				jsonOutput = jsonOutput.replace("\n", "<br>");
 	            htmlString = getHtmlString(code, parsingAttribute).
