@@ -16,7 +16,11 @@ Installing the workspacee
 
 	cd $ECLIPSE_DIR$
 	
+Opening a port on a Linux machine
 	
+	sudo ufw allow 8845
+	sudo ufw status
+
 
 Running the server as headless Eclipse
 

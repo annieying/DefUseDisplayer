@@ -85,8 +85,13 @@ public class DefUseVisitor extends ASTVisitor {
 				if (defUse == null ) {	              
 					defUse = new VariableDef(name, nodeType, type, parent,
 							charStart, charEnd);
-					varBindings.put(varBinding, defUse);            
+
+					varBindings.put(varBinding, defUse);
+				} else {
+					defUse.setUses(new VariableUse(name, nodeType, type, parent,
+						charStart, charEnd));
 				}
+
 			} 
 		}   
 		

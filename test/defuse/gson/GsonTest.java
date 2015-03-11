@@ -12,7 +12,8 @@ import defuse.VariableUse;
 
 public class GsonTest {
 	
-	static String targetCompact = "[{\"def\":{\"name\":\"a\",\"type\":\"int\",\"variableId\":2,\"charStart\":1,\"charEnd\":3,\"parent\":\"int a=1;\"},\"uses\":[{\"name\":\"a\",\"type\":\"int\",\"variableId\":1,\"charStart\":6,\"charEnd\":9,\"parent\":\"b=a+a;\"}]}]";
+	static String targetCompact = "[{\"def\":{\"name\":\"a\",\"type\":\"int\",\"nodeType\":\"\",\"charStart\":1,\"charEnd\":3,\"parent\":\"int a=1;\"},\"uses\":[{\"name\":\"a\",\"type\":\"int\",\"nodeType\":\"\",\"charStart\":6,\"charEnd\":9,\"parent\":\"b=a+a;\"}]}]";
+
 			
 	@Test
 	public void testToJson() {

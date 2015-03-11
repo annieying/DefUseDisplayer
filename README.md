@@ -1,3 +1,3 @@
 # DefUseDisplayer
 
-Installation and running
+see /doc
