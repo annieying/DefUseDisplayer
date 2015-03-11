@@ -43,6 +43,7 @@ References:
 
 --- Packaging it ---
 
+
 Set variables for the directories we need
 
 	export CODE=/diskless/local/annie/workspaces/20150223-headlessEclipseServer/
@@ -50,6 +51,12 @@ Set variables for the directories we need
 	export ZIP_DIR=/diskless/local/annie/workspaces/20140228-summarizer/headless-eclipse/zipped
 	
 	export WORKSPACE=/diskless/local/annie/workspaces/runtime-AstProject/
+
+	export ECLIPSE=/diskless/local/annie/eclipse-rcp-helios-SR2/
+
+Package Eclipse with PPA
+
+	zip -r $ZIP_DIR/DefUseServer.zip ./
 
 Generating the binary files
 
