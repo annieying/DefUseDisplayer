@@ -88,8 +88,13 @@ public class DefUseVisitor extends ASTVisitor {
 
 					varBindings.put(varBinding, defUse);
 				} else {
-					defUse.setUses(new VariableUse(name, nodeType, type, parent,
-						charStart, charEnd));
+					if( defUse.getCharStart() == charStart && 
+							defUse.getCharEnd() == charEnd ) {
+						// don't add a use if it's the same instance of the variable defined
+					} else {
+						defUse.setUses(new VariableUse(name, nodeType, type, parent,
+								charStart, charEnd));
+					}
 				}
 
 			} 
