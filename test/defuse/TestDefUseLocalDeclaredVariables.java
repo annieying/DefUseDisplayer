@@ -6,15 +6,16 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import defuse.server.ParsingAttribute;
 import defuse.server.Strategy;
 
 public class TestDefUseLocalDeclaredVariables {
 
 	String code = "public class foo { void bar() { int number = 4; a.print(); a.setNumber(number);} }";
-	
+	ParsingAttribute parsing = ParsingAttribute.JavaCompilationUnit;
 	@Test
 	public void testUndeclaredVariablePPA() throws Exception {
-		Collection<VariableDef> defs = DefUseAnalyzer.analyzeReturnList(code, Strategy.ppa);
+		Collection<VariableDef> defs = DefUseAnalyzer.analyzeReturnList(code, Strategy.ppa, parsing);
 		
 		VariableDef a = null;
 		for( VariableDef def : defs ) {
@@ -29,7 +30,7 @@ public class TestDefUseLocalDeclaredVariables {
 	
 	@Test
 	public void testUndeclaredVariableEclipse() throws Exception {
-		Collection<VariableDef> defs = DefUseAnalyzer.analyzeReturnList(code, Strategy.ppa);
+		Collection<VariableDef> defs = DefUseAnalyzer.analyzeReturnList(code, Strategy.ppa, parsing);
 		
 		VariableDef a = null;
 		for( VariableDef def : defs ) {
