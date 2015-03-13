@@ -23,7 +23,7 @@ To test it in Eclipse:
 
 To run it command-line:
 	
-	Pre-install eclipse on $ECLIPSE_DIR: /diskless/local/annie/workspaces/20140228-summarizer/headless-eclipse/
+	Pre-install eclipse on $ECLIPSE_DIR: /diskless/local/annie/eclipse-servers/
 	
 	Export --> Deployable plugins and fragments
 
