@@ -33,13 +33,6 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 			+ PARSING_ATTRIBUTE_PLACEHOLDER + "<br>";
 	private static final String PARSING_HTML_PLACEHOLDER = "<!--***PARSING_ATTRIBUTES***-->";
 	
-	enum ParsingAttribute {
-		JavaClassBodyMemberDeclaration,
-		JavaCompilationUnit,
-		JavaBlockStatements,
-		JavaSwitchBlockStatementGroup,
-		JavaMethodDeclaration
-	}
 	
 	enum Format {
 		ui,
@@ -88,17 +81,21 @@ public class DefUseEclipseSerlvet extends HttpServlet {
             aResponse.setStatus(HttpServletResponse.SC_CREATED);
             ServletOutputStream out = aResponse.getOutputStream();
       	         	            	
-            jsonOutput = code == null ? "" : DefUseAnalyzer.analyze(code, strategy);
+            jsonOutput = code == null ? "" : DefUseAnalyzer.analyze(code, strategy, parsingAttribute);
             
 			if( format == Format.json ) {
 				aResponse.setContentType("application/json");
 				htmlString = jsonOutput;
 			} else {
-	            jsonOutput = getResult(code, strategy);
+	           	String output = "Result:\n\n"; 
+	    		output += "<pre>\n";
+	    		output += code == null ? "" : jsonOutput.replace("\n", "<br>");
+	    		output = output.replace("\n", "<br>");
+	    		output += "</pre>\n";
+	    		
 				aResponse.setContentType("text/html");
-				jsonOutput = jsonOutput.replace("\n", "<br>");
 	            htmlString = getHtmlString(code, parsingAttribute).
-	            		replace(DEF_USE_PLACEHOLDER, jsonOutput);
+	            		replace(DEF_USE_PLACEHOLDER, output);
 			}            
             
             out.print(htmlString);
@@ -134,15 +131,6 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 	    return htmlString;
 	}
 	
-	private static String getResult(String code, Strategy strategy) {
-		String output = "Result:\n\n"; 
-		output += "<pre>\n";
-		output += code == null ? "" : DefUseAnalyzer.analyze(code, strategy);
-		output = output.replace("\n", "<br>");
-		output += "</pre>\n";
-		return output;
-		
-	}
 	
     public static File getWebFileFromBundle(String path) {
     	if ( DefUseEclipseServerApplication.TEST ) {

@@ -59,8 +59,23 @@ public class AstUtil {
         return pkg;
     }
     
-	public static CompilationUnit getPpaAst(String source) {
+	public static CompilationUnit getCompilationUnitUsingPPA(String source) {
 		CompilationUnit ast = PPAUtil.getCU(source, new PPAOptions());
+		while( ast == null ) {
+			try {
+				Thread.sleep(1000);
+				PPAUtil.cleanUpAll();
+				Thread.sleep(1000);
+				ast = PPAUtil.getCU(source, new PPAOptions());
+				if( ast != null) break;
+			} catch (InterruptedException e) {}
+			
+		}
+		return ast;
+	}
+
+	public static ASTNode getASTUsingPPA(String source, boolean isTypeBody) {
+		ASTNode ast = PPAUtil.getSnippet(source, new PPAOptions(), isTypeBody);
 		return ast;
 	}
     
