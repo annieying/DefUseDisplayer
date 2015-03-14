@@ -9,7 +9,7 @@ Installing the server
 	
 	Copy DefUseServer.zip to $ECLIPSE_DIR$/eclipse 
    
-	Unzip DefUseServer.zip - which creates plugins/*.jar and res 
+	Unzip DefUseServer.zip - which creates dropins/*.jar and res 
    	
 
 Installing the workspacee
@@ -37,4 +37,4 @@ Running the server as headless Eclipse
 		
 Accessing the web site
 
-	http://aspect.cs.mcgill.ca:8844/Formatter
+	http://annieying.ca:8845/DefUse
