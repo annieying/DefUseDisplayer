@@ -156,9 +156,9 @@ public class DefUseEclipseSerlvet extends HttpServlet {
     private static String getParsingAttributesHtml() {
         String html = "";
         for( ParsingAttribute a : ParsingAttribute.values() ) {
-        	if( a == ParsingAttribute.JavaCompilationUnit ) {
+//        	if( a == ParsingAttribute.JavaCompilationUnit ) {
         		html += PARSING_ATTRIBUTE_ROW.replace(PARSING_ATTRIBUTE_PLACEHOLDER, a.name());
-        	}
+//        	}
         }
         return html;
     }
