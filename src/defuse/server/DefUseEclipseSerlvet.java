@@ -5,17 +5,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
-
 import defuse.DefUseAnalyzer;
 
 public class DefUseEclipseSerlvet extends HttpServlet {
@@ -118,17 +115,9 @@ public class DefUseEclipseSerlvet extends HttpServlet {
         	htmlString = htmlString.replace(UNFORMATTED_CODE_PLACEHOLDER, "");
         } else {            	
         	htmlString = htmlString.replace(UNFORMATTED_CODE_PLACEHOLDER, code);
-        }
-                        			    
-	    if( parsingAttribute == ParsingAttribute.JavaCompilationUnit ){		    		
-        	System.out.println(code);
-        	System.out.println("*** " + parsingAttribute + "***");    		
-
-	    } else {
-	    	htmlString = htmlString.replace(DEF_USE_PLACEHOLDER, "Choose parsing attributes");
-	    }         
+        }       
 	    
-	    return htmlString;
+        return htmlString;
 	}
 	
 	
