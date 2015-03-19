@@ -18,7 +18,7 @@ public class TestDefUseFieldUnkonwnType {
 		
 		VariableDef a = VariableDef.getDef(defs, "a", 30, 31);
 		
-		Assert.assertEquals(2, a.getUses().size());	
+		Assert.assertEquals(1, a.getUses().size());	
 	}
 	
 	@Test

@@ -20,7 +20,7 @@ public class TestDefUseCatchUnknownType {
 		
 		VariableDef a = VariableDef.getDef(defs, "a", 63, 64);
 		
-		Assert.assertEquals(2, a.getUses().size());	
+		Assert.assertEquals(1, a.getUses().size());	
 	}
 	
 	@Test

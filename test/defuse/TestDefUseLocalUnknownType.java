@@ -20,8 +20,8 @@ public class TestDefUseLocalUnknownType {
 		VariableDef a1 = VariableDef.getDef(defs, "a", 42, 43);
 		VariableDef a2 = VariableDef.getDef(defs, "a", 77, 78);
 		
-		Assert.assertEquals(1, a1.getUses().size());
-		Assert.assertEquals(2, a2.getUses().size());
+		Assert.assertEquals(0, a1.getUses().size());
+		Assert.assertEquals(1, a2.getUses().size());
 		
 	}
 	

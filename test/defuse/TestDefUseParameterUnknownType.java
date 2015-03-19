@@ -22,8 +22,8 @@ public class TestDefUseParameterUnknownType {
 		Assert.assertNotNull(a);
 		Assert.assertNotNull(b);
 		
-		Assert.assertEquals(2, b.getUses().size());
-		Assert.assertEquals(1, a.getUses().size());
+		Assert.assertEquals(1, b.getUses().size());
+		Assert.assertEquals(0, a.getUses().size());
 	}
 
 	
