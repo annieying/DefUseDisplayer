@@ -3,10 +3,8 @@ package defuse.gson;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import defuse.VariableDef;
 import defuse.VariableUse;
 
@@ -18,8 +16,8 @@ public class GsonTest {
 	@Test
 	public void testToJson() {
 		
-		VariableUse use = new VariableUse("a", "","int", "b=a+a;", 6,9);
-		VariableDef def = new VariableDef("a", "", "int" , "int a=1;", 1,3);
+		VariableUse use = new VariableUse("a", "","int", "b=a+a;", 6,9, null);
+		VariableDef def = new VariableDef("a", "", "int" , "int a=1;", 1,3, null);
 		def.setUses(use);
 		List<VariableDef> defs = new ArrayList<VariableDef>();
 		defs.add(def);

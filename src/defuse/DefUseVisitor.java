@@ -5,24 +5,26 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IBinding;
-import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
-import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import defuse.server.ParsingAttribute;
 
 public class DefUseVisitor extends ASTVisitor {
 
-	Map<IVariableBinding,VariableDef> varBindings = new HashMap<IVariableBinding,VariableDef>();
-	List<VariableUse> otherSymbols = new ArrayList<VariableUse>();
+  private ParsingAttribute parsing ;
+	private Map<IVariableBinding,VariableDef> varBindings = new HashMap<IVariableBinding,VariableDef>();
+	private List<VariableUse> otherSymbols = new ArrayList<VariableUse>();
 
+	public DefUseVisitor( ParsingAttribute parsing) {
+	  this.parsing = parsing;
+	}
+	
 	public Map<IVariableBinding,VariableDef> getVarBindings() {
 		return varBindings;
 	}  
@@ -56,7 +58,7 @@ public class DefUseVisitor extends ASTVisitor {
 			String nodeType = var.getClass().toString();
 
 			VariableDef defUse = new VariableDef(name, nodeType, typeName, parent,
-					charStart, charEnd);
+					charStart, charEnd, parsing);
 			varBindings.put(binding, defUse);   	              
 			System.out.println("Set usage of var " + name);	              
 		}
@@ -84,7 +86,7 @@ public class DefUseVisitor extends ASTVisitor {
 
 				if (defUse == null ) {	              
 					defUse = new VariableDef(name, nodeType, type, parent,
-							charStart, charEnd);
+							charStart, charEnd, parsing);
 
 					varBindings.put(varBinding, defUse);
 				} else {
@@ -93,7 +95,7 @@ public class DefUseVisitor extends ASTVisitor {
 						// don't add a use if it's the same instance of the variable defined
 					} else {
 						defUse.setUses(new VariableUse(name, nodeType, type, parent,
-								charStart, charEnd));
+								charStart, charEnd, parsing));
 					}
 				}
 
@@ -129,7 +131,8 @@ public class DefUseVisitor extends ASTVisitor {
 
 				String type = binding.getType().getName();           
 
-				VariableDef defUse = new VariableDef(name, nodeType, type, parent, charStart, charEnd);
+				VariableDef defUse = new VariableDef(name, nodeType, type, parent, 
+				    charStart, charEnd, parsing);
 				varBindings.put(binding, defUse);
 
 				System.out.println("Set declaration var " + varName);
@@ -162,7 +165,7 @@ public class DefUseVisitor extends ASTVisitor {
 			String nodeType = node.getClass().toString();
 
 			VariableDef defUse = new VariableDef(name, nodeType, type,
-					parent, charStart, charEnd);
+					parent, charStart, charEnd, parsing);
 			varBindings.put(binding, defUse);
 
 			System.out.println("Set declaration field " + variableId);	        

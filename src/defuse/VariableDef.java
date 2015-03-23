@@ -10,14 +10,16 @@ import java.util.Set;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import defuse.server.ParsingAttribute;
 
 public class VariableDef {
     private VariableUse def;
     private Set<VariableUse> uses = new HashSet<VariableUse>();
     
     public VariableDef( String name, String nodeType, String type, String parent,
-    		int charStart, int charEnd ) {
-        this.def=new VariableUse(name,nodeType,type,parent,charStart,charEnd);
+    		int charStart, int charEnd, ParsingAttribute parsing ) {
+      
+      this.def=new VariableUse(name,nodeType,type,parent,charStart,charEnd, parsing);
     }
     
 	public static String toJson(Collection<VariableDef> defs) {

@@ -3,12 +3,10 @@ package defuse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.IVariableBinding;
-
 import ca.mcgill.cs.swevo.ppa.ui.PPAUtil;
 import defuse.server.ParsingAttribute;
 import defuse.server.Strategy;
@@ -24,7 +22,7 @@ public class DefUseAnalyzer {
 			
 			ASTNode ast = getAstNode(code, strategy, parsing);
 			      
-			Collection<VariableDef> defs = analyzeReturnList(ast);			
+			Collection<VariableDef> defs = analyzeReturnList(ast, parsing);			
 			message = outputMessagesForListOfDefs(defs);
 			
 			if( strategy == Strategy.ppa) {
@@ -42,17 +40,18 @@ public class DefUseAnalyzer {
     	String message = "";
 			
 		ASTNode ast = AstUtil.getEclipseAst(unit);			
-		Collection<VariableDef> defs = analyzeReturnList(ast);			
+		Collection<VariableDef> defs = analyzeReturnList(ast, ParsingAttribute.JavaCompilationUnit);			
 		message = outputMessagesForListOfDefs(defs);
    
         return message;
     }
     
 
-    public static Collection<VariableDef> analyzeReturnList(String code, Strategy strategy, ParsingAttribute parsing) {
+    public static Collection<VariableDef> analyzeReturnList(String code, 
+        Strategy strategy, ParsingAttribute parsing) {
     	try { 
     		ASTNode ast = getAstNode(code, strategy, parsing);
-    		return analyzeReturnList(ast);
+    		return analyzeReturnList(ast, parsing);
     	} catch(CoreException e) {
     		e.printStackTrace();
     	}
@@ -60,9 +59,10 @@ public class DefUseAnalyzer {
     }
     
     
-    public static Collection<VariableDef> analyzeReturnList(ASTNode ast) {
+    public static Collection<VariableDef> analyzeReturnList(ASTNode ast,
+        ParsingAttribute parsing) {
 
-        DefUseVisitor printer = new DefUseVisitor();
+        DefUseVisitor printer = new DefUseVisitor(parsing);
     	try {
 	        ast.accept(printer);
     	} catch(Throwable e ) {
