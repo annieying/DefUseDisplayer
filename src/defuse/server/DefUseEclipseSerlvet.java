@@ -49,6 +49,7 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 	public void process(HttpServletRequest aRequest, HttpServletResponse aResponse) 
 			throws ServletException, IOException {
 		String code =  aRequest.getParameter("code"); 
+		code = code != null ? code.replace("\r", "") : null;
 		
 		String parsingAttributeString = aRequest.getParameter("parsing-attribute");
 		String formatString = aRequest.getParameter("format");
@@ -77,7 +78,7 @@ public class DefUseEclipseSerlvet extends HttpServlet {
 					
             aResponse.setStatus(HttpServletResponse.SC_CREATED);
             ServletOutputStream out = aResponse.getOutputStream();
-      	         	            	
+
             jsonOutput = code == null ? "" : DefUseAnalyzer.analyze(code, strategy, parsingAttribute);
             
 			if( format == Format.json ) {

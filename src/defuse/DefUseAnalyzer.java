@@ -19,8 +19,11 @@ public class DefUseAnalyzer {
 
     	String message = "";
 		try {
+
+      int a = code.indexOf("sharedPreferences,");
 			
-			ASTNode ast = getAstNode(code, strategy, parsing);			
+			ASTNode ast = getAstNode(code, strategy, parsing);
+			      
 			Collection<VariableDef> defs = analyzeReturnList(ast);			
 			message = outputMessagesForListOfDefs(defs);
 			
